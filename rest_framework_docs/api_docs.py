@@ -8,13 +8,13 @@ from rest_framework_docs.api_endpoint import ApiEndpoint
 
 class ApiDocumentation(object):
 
-    def __init__(self):
+    def __init__(self, urlconf=settings.ROOT_URLCONF):
         self.endpoints = []
         try:
-            root_urlconf = import_string(settings.ROOT_URLCONF)
+            root_urlconf = import_string(urlconf)
         except ImportError:
             # Handle a case when there's no dot in ROOT_URLCONF
-            root_urlconf = import_module(settings.ROOT_URLCONF)
+            root_urlconf = import_module(urlconf)
         if hasattr(root_urlconf, 'urls'):
             self.get_all_view_names(root_urlconf.urls.urlpatterns)
         else:
