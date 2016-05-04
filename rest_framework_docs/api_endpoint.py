@@ -18,6 +18,7 @@ class ApiEndpoint(object):
         self.errors = None
         self.fields = self.__get_serializer_fields__()
         self.fields_json = self.__get_serializer_fields_json__()
+        self.filters = self.__get_filter_fields__()
         self.permissions = self.__get_permissions_class__()
 
     def __get_path__(self, parent_pattern):
@@ -35,7 +36,7 @@ class ApiEndpoint(object):
         for perm_class in self.pattern.callback.cls.permission_classes:
             return perm_class.__name__
 
-    def _is_hidden_field(field):
+    def _is_hidden_field(self, field):
         return "Hidden" in field.__class__.__name__
 
     def __get_serializer_fields__(self):
@@ -49,7 +50,7 @@ class ApiEndpoint(object):
                         "name": key,
                         "type": str(field.__class__.__name__),
                         "required": field.required
-                    } for key, field in serializer().get_fields().items()]
+                    } for key, field in serializer().get_fields().items() if not self._is_hidden_field(field)]
                 except KeyError as e:
                     self.errors = e
                     fields = []
@@ -58,6 +59,38 @@ class ApiEndpoint(object):
                 # Show more attibutes of `field`?
 
         return fields
+
+    def __get_filters__(self, filter_backend):
+        filter =  {'backend_name': filter_backend.__name__,
+                    'filter_fields': [],
+                    'search_param': [],
+                    'ordering': {}
+                    }
+
+        filter_class = None
+        get_filter_class = getattr(filter_backend, "get_filter_class", None)
+        if callable(get_filter_class):
+            filter_class = filter_backend().get_filter_class(self.callback)
+
+        if hasattr(filter_backend, 'search_param'):
+            filter['search_param'] = filter_backend.search_param
+
+        # Checks if ordering_fields are set in the view before setting them
+        if hasattr(filter_backend, 'ordering_fields') and hasattr(self.callback.cls, 'ordering_fields')\
+           and self.callback.cls.ordering_fields:
+            filter['ordering'] = {'ordering_fields': self.callback.cls.ordering_fields,
+                                  'ordering_param': filter_backend.ordering_param}
+
+        return filter
+
+    def __get_filter_fields__(self):
+        filters = []
+
+        if hasattr(self.callback.cls, 'filter_backends'):
+            for backend in self.callback.cls.filter_backends:
+                filters.append(self.__get_filters__(backend))
+
+        return filters
 
     def __get_serializer_fields_json__(self):
         # FIXME:
