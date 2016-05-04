@@ -2,6 +2,7 @@ import json
 import inspect
 from django.contrib.admindocs.views import simplify_regex
 from django.utils.encoding import force_str
+from rest_framework_docs.settings import DRFSettings
 
 
 class ApiEndpoint(object):
@@ -41,6 +42,7 @@ class ApiEndpoint(object):
 
     def __get_serializer_fields__(self):
         fields = []
+        settings = DRFSettings().settings
 
         if hasattr(self.callback.cls, 'serializer_class') and hasattr(self.callback.cls.serializer_class, 'get_fields'):
             serializer = self.callback.cls.serializer_class
@@ -50,7 +52,8 @@ class ApiEndpoint(object):
                         "name": key,
                         "type": str(field.__class__.__name__),
                         "required": field.required
-                    } for key, field in serializer().get_fields().items() if not self._is_hidden_field(field)]
+                    } for key, field in serializer().get_fields().items() \
+                              if (not settings['HIDE_HIDDEN_FIELDS'] and not self._is_hidden_field(field))]
                 except KeyError as e:
                     self.errors = e
                     fields = []

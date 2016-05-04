@@ -41,6 +41,7 @@
                 {% for method in endpoint.allowed_methods %}
                   <li class="method {{ method|lower }}">{{ method }}</li>
                 {% endfor %}
+                {% if not drfdocs_settings.HIDE_LIVE_ENDPOINT %}
                   <li class="method plug"
                     data-toggle="modal"
                     data-path="{{ endpoint.path }}"
@@ -48,6 +49,7 @@
                     data-permissions="{{ endpoint.permissions }}"
                     data-fields="{{ endpoint.fields_json }}">
                     <i class="fa fa-plug"></i></li>
+                {% endif %}
               </ul>
             </div>
           </div>
@@ -96,6 +98,7 @@
     <h2 class="text-center">No endpoints found for {{ query }}.</h2>
   {% endif %}
 
+  {% if not drfdocs_settings.HIDE_LIVE_ENDPOINT %}
   <!-- Modal -->
   <div class="modal fade api-modal" id="liveAPIModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg" role="document">
@@ -109,5 +112,6 @@
       </div>
     </div>
   </div>
+  {% endif %}
 
 {% endblock %}

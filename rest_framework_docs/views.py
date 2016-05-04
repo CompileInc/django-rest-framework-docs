@@ -26,4 +26,5 @@ class DRFDocsView(TemplateView):
 
         context['query'] = query
         context['endpoints'] = endpoints
+        context['drfdocs_settings'] = settings
         return context
