@@ -64,11 +64,11 @@ class ApiEndpoint(object):
         return fields
 
     def __get_filters__(self, filter_backend):
-        filter =  {'backend_name': filter_backend.__name__,
-                    'filter_fields': [],
-                    'search_param': [],
-                    'ordering': {}
-                    }
+        filter_data =  {'backend_name': filter_backend.__name__,
+                        'filter_fields': [],
+                        'search_param': [],
+                        'ordering': {}
+                        }
 
         filter_class = None
         get_filter_class = getattr(filter_backend, "get_filter_class", None)
@@ -76,15 +76,15 @@ class ApiEndpoint(object):
             filter_class = filter_backend().get_filter_class(self.callback)
 
         if hasattr(filter_backend, 'search_param'):
-            filter['search_param'] = filter_backend.search_param
+            filter_data['search_param'] = filter_backend.search_param
 
         # Checks if ordering_fields are set in the view before setting them
         if hasattr(filter_backend, 'ordering_fields') and hasattr(self.callback.cls, 'ordering_fields')\
            and self.callback.cls.ordering_fields:
-            filter['ordering'] = {'ordering_fields': self.callback.cls.ordering_fields,
-                                  'ordering_param': filter_backend.ordering_param}
+            filter_data['ordering'] = {'ordering_fields': self.callback.cls.ordering_fields,
+                                       'ordering_param': filter_backend.ordering_param}
 
-        return filter
+        return filter_data
 
     def __get_filter_fields__(self):
         filters = []

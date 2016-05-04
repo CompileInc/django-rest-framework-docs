@@ -32,7 +32,9 @@ INSTALLED_APPS = [
 ROOT_URLCONF = 'tests.urls'
 
 REST_FRAMEWORK_DOCS = {
-    'HIDE_DOCS': False
+    'HIDE_DOCS': False,
+    'HIDE_LIVE_ENDPOINTS': False,
+    'HIDE_HIDDEN_FIELDS': False
 }
 
 # Static files (CSS, JavaScript, Images)

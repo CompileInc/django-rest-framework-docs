@@ -41,7 +41,7 @@
                 {% for method in endpoint.allowed_methods %}
                   <li class="method {{ method|lower }}">{{ method }}</li>
                 {% endfor %}
-                {% if not drfdocs_settings.HIDE_LIVE_ENDPOINT %}
+                {% if not drfdocs_settings.HIDE_LIVE_ENDPOINTS %}
                   <li class="method plug"
                     data-toggle="modal"
                     data-path="{{ endpoint.path }}"
@@ -98,7 +98,7 @@
     <h2 class="text-center">No endpoints found for {{ query }}.</h2>
   {% endif %}
 
-  {% if not drfdocs_settings.HIDE_LIVE_ENDPOINT %}
+  {% if not drfdocs_settings.HIDE_LIVE_ENDPOINTS %}
   <!-- Modal -->
   <div class="modal fade api-modal" id="liveAPIModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg" role="document">
