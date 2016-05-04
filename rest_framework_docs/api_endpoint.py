@@ -35,6 +35,9 @@ class ApiEndpoint(object):
         for perm_class in self.pattern.callback.cls.permission_classes:
             return perm_class.__name__
 
+    def _is_hidden_field(field):
+        return "Hidden" in field.__class__.__name__
+
     def __get_serializer_fields__(self):
         fields = []
 
