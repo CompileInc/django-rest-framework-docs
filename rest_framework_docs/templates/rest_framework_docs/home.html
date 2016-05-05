@@ -68,9 +68,22 @@
             <p class="fields-desc">Request Fields:</p>
             {% if endpoint.filters %}
             <ul class="list fields">
-            {% for field, value in endpoint.filters.items %}
+
+            {% if endpoint.filters.ordering %}
+              <li class="list-unstyled"><h5>Ordering:</h5></li>
+              <li>Query Parameter : {{ endpoint.filters.ordering.ordering_param }}</li>
+              <li>Ordering Choices : {% for field in endpoint.filters.ordering.ordering_fields %}{{ field }}{% if not forloop.last %}, {% endif %}{% endfor %}</li>
+            {% endif %}
+
+            {% if endpoint.filters.search_param %}
+              <li class="list-unstyled"><h5>Search:</h5></li>
+              <li>Search Parameter : {{ endpoint.filters.search_param }}</li>
+            {% endif %}
+
+<!--             {% for field, value in endpoint.filters.items %}
               <li>{{ field }} - {{ value }}</li>
             {% endfor %}
+ -->
             </ul>
             {% elif not endpoint.errors %}
             <p>No fields.</p>
