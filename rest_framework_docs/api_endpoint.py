@@ -1,6 +1,7 @@
 import json
 import inspect
 from django.contrib.admindocs.views import simplify_regex
+from django.core.validators import EMPTY_VALUES
 from django.utils.encoding import force_str
 from rest_framework_docs.settings import DRFSettings
 
@@ -66,7 +67,7 @@ class ApiEndpoint(object):
     def __get_filters__(self, filter_backend):
         filter_data =  {'backend_name': filter_backend.__name__,
                         'filter_fields': [],
-                        'search_param': [],
+                        'search_param': None,
                         'ordering': {}
                         }
 
@@ -87,13 +88,28 @@ class ApiEndpoint(object):
         return filter_data
 
     def __get_filter_fields__(self):
+        _filters = {
+                    'filter_fields':{},
+                    'search_param': None,
+                    'ordering': {},
+                    }
+
         filters = []
-
         if hasattr(self.callback.cls, 'filter_backends'):
-            for backend in self.callback.cls.filter_backends:
-                filters.append(self.__get_filters__(backend))
+            filters = [self.__get_filters__(backend) for backend in self.callback.cls.filter_backends]
 
-        return filters
+        # Squash across filters
+        for f in filters:
+            for field in f['filter_fields']:
+                _filters['filter_fields'][f['name']] = f
+
+            if f['search_param'] not in EMPTY_VALUES:
+                _filters['search_param'] = f['search_param']
+
+            if f['ordering'] not in EMPTY_VALUES:
+                _filters['ordering'] = f['ordering']
+
+        return _filters
 
     def __get_serializer_fields_json__(self):
         # FIXME:

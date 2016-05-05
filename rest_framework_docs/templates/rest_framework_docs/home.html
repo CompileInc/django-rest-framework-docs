@@ -65,22 +65,24 @@
             <div class="alert alert-danger" role="alert">Oops! There was something wrong with {{ endpoint.errors }}. Please check your code.</div>
             {% endif %}
 
+            <p class="fields-desc">Request Fields:</p>
             {% if endpoint.filters %}
-            <p class="fields-desc">Response Fields:</p>
-              <ul class="list fields">
-              {% for field in endpoint.filters %}
-                {{ field }}
-              {% endfor %}
-              </ul>
+            <ul class="list fields">
+            {% for field, value in endpoint.filters.items %}
+              <li>{{ field }} - {{ value }}</li>
+            {% endfor %}
+            </ul>
+            {% elif not endpoint.errors %}
+            <p>No fields.</p>
             {% endif %}
 
-            {% if endpoint.fields %}
             <p class="fields-desc">Response Fields:</p>
-              <ul class="list fields">
-              {% for field in endpoint.fields %}
-                <li class="field">{{ field.name }}: {{ field.type }} {% if field.required %}<span class="label label-primary label-required" title="Required">R</span>{% endif %}</li>
-              {% endfor %}
-              </ul>
+            {% if endpoint.fields %}
+            <ul class="list fields">
+            {% for field in endpoint.fields %}
+              <li class="field">{{ field.name }}: {{ field.type }} {% if field.required %}<span class="label label-primary label-required" title="Required">R</span>{% endif %}</li>
+            {% endfor %}
+            </ul>
             {% elif not endpoint.errors %}
             <p>No fields.</p>
             {% endif %}
