@@ -89,12 +89,7 @@ class ApiEndpoint(object):
             # Have a better mechanism to extract fields
 
         if filter_class:
-            field_set = [filter_class.__dict__['declared_filters'],
-                         filter_class.__dict__['base_filters']
-                         ]
-
-            for fset in field_set:
-                filter_data['filter_fields'].extend(fset.items())
+            filter_data['filter_fields'] = filter_class.__dict__['base_filters'].items()
 
         if hasattr(filter_backend, 'search_param'):
             filter_data['search_param'] = filter_backend.search_param
