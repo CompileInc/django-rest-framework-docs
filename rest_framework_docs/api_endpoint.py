@@ -54,7 +54,8 @@ class ApiEndpoint(object):
                         "type": str(field.__class__.__name__),
                         "required": field.required
                     } for key, field in serializer().get_fields().items() \
-                              if (not settings['HIDE_HIDDEN_FIELDS'] and not self._is_hidden_field(field))]
+                              if (settings['HIDE_HIDDEN_FIELDS'] and not self._is_hidden_field(field)) or\
+                                 (not settings['HIDE_HIDDEN_FIELDS'])]
                 except KeyError as e:
                     self.errors = e
                     fields = []
@@ -74,7 +75,7 @@ class ApiEndpoint(object):
         filter_class = None
         get_filter_class = getattr(filter_backend, "get_filter_class", None)
         if callable(get_filter_class):
-            filter_class = filter_backend().get_filter_class(self.callback)
+            filter_class = filter_backend().get_filter_class(view=self.callback.cls)
 
         if hasattr(filter_backend, 'search_param'):
             filter_data['search_param'] = filter_backend.search_param
