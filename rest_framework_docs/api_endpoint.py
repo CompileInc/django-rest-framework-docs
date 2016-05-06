@@ -75,7 +75,26 @@ class ApiEndpoint(object):
         filter_class = None
         get_filter_class = getattr(filter_backend, "get_filter_class", None)
         if callable(get_filter_class):
-            filter_class = filter_backend().get_filter_class(view=self.callback.cls)
+            try:
+                try:
+                    qs = self.callback.cls().get_queryset()
+                except:
+                    qs = self.callback.cls().model.objects.all()
+                filter_class = filter_backend().get_filter_class(view=self.callback.cls,
+                                                                 queryset=qs)
+            except:
+                pass
+
+            # FIXME:
+            # Have a better mechanism to extract fields
+
+        if filter_class:
+            field_set = [filter_class.__dict__['declared_filters'],
+                         filter_class.__dict__['base_filters']
+                         ]
+
+            for fset in field_set:
+                filter_data['filter_fields'].extend(fset.items())
 
         if hasattr(filter_backend, 'search_param'):
             filter_data['search_param'] = filter_backend.search_param
@@ -102,7 +121,7 @@ class ApiEndpoint(object):
         # Squash across filters
         for f in filters:
             for field in f['filter_fields']:
-                _filters['filter_fields'][f['name']] = f
+                _filters['filter_fields'][field[0]] = field[1]
 
             if f['search_param'] not in EMPTY_VALUES:
                 _filters['search_param'] = f['search_param']

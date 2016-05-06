@@ -81,13 +81,16 @@
               <li>Search Parameter : {{ endpoint.filters.search_param }}</li>
             {% endif %}
 
+            {% if endpoint.filters.filter_fields.items|length > 0 %}
+              <li class="list-unstyled"><h5>Filters:</h5></li>
+              <li>{{ endpoint.filters.filter_fields }}</li>
+            {% endif %}
+
 <!--             {% for field, value in endpoint.filters.items %}
               <li>{{ field }} - {{ value }}</li>
             {% endfor %}
  -->
             </ul>
-            {% elif not endpoint.errors %}
-            <p>No fields.</p>
             {% endif %}
 
             <p class="fields-desc">Response Fields:</p>
