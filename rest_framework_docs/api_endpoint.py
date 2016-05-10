@@ -95,13 +95,8 @@ class ApiEndpoint(object):
                      "name": k,
                      "type": str(v.__class__.__name__),
                      "required": v.required,
-                     "choices": None
+                     "choices": v.field.choices if hasattr(v.field, 'choices') else None
                      }
-                try:
-                    # Using try-except for speed
-                    f["choices"] = v.get_choices()
-                except AttributeError:
-                    pass
                 filter_data['filter_fields'].append(f)
 
         if hasattr(filter_backend, 'search_param'):
