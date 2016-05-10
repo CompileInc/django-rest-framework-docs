@@ -82,13 +82,13 @@
 
             {% if endpoint.filters.filter_fields.items|length > 0 %}
               <li class="list-unstyled"><h5>Filters:</h5></li>
-              <li>{{ endpoint.filters.filter_fields }}</li>
+              {% for name, field in endpoint.filters.filter_fields.items %}
+              <li class="field">{{ field.name }}: {{ field.type }} {% if field.required %}<span class="label label-primary label-required" title="Required">R</span>{% endif %}
+              {% include "rest_framework_docs/field_choices.html" %}
+              </li>
+              {% endfor %}
             {% endif %}
 
-<!--             {% for field, value in endpoint.filters.items %}
-              <li>{{ field }} - {{ value }}</li>
-            {% endfor %}
- -->
             </ul>
             {% endif %}
 
