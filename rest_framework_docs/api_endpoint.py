@@ -95,7 +95,7 @@ class ApiEndpoint(object):
                      "name": k,
                      "type": str(v.__class__.__name__),
                      "required": v.required,
-                     "choices": v.field.choices if hasattr(v.field, 'choices') else None
+                     "choices": list(v.field.choices) if hasattr(v.field, 'choices') else None
                      }
                 filter_data['filter_fields'].append(f)
 
