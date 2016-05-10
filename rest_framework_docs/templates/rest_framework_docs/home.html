@@ -65,9 +65,8 @@
             <div class="alert alert-danger" role="alert">Oops! There was something wrong with {{ endpoint.errors }}. Please check your code.</div>
             {% endif %}
 
+            {% if endpoint.filters.ordering.items|length > 0 or endpoint.filters.search_param or endpoint.filters.filter_fields.items|length > 0 %}
             <p class="fields-desc">Request Fields:</p>
-
-            {% if endpoint.filters %}
             <ul class="list fields">
 
             {% if endpoint.filters.ordering %}
