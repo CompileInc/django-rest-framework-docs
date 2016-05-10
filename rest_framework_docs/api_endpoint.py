@@ -66,10 +66,10 @@ class ApiEndpoint(object):
         return fields
 
     def __get_filters__(self, filter_backend):
-        filter_data =  {'backend_name': filter_backend.__name__,
-                        'filter_fields': [],
-                        'search_param': None,
-                        'ordering': {}
+        filter_data =  {"backend_name": filter_backend.__name__,
+                        "filter_fields": [],
+                        "search_param": None,
+                        "ordering": {}
                         }
 
         filter_class = None
@@ -89,7 +89,20 @@ class ApiEndpoint(object):
             # Have a better mechanism to extract fields
 
         if filter_class:
-            filter_data['filter_fields'] = filter_class.__dict__['base_filters'].items()
+            filter_data['filter_fields'] = []
+            for k, v in filter_class.__dict__['base_filters'].items():
+                f = {
+                     "name": k,
+                     "type": str(v.__class__.__name__),
+                     "required": v.required,
+                     "choices": None
+                     }
+                try:
+                    # Using try-except for speed
+                    f["choices"] = v.get_choices()
+                except AttributeError:
+                    pass
+                filter_data['filter_fields'].append(f)
 
         if hasattr(filter_backend, 'search_param'):
             filter_data['search_param'] = filter_backend.search_param
@@ -116,7 +129,7 @@ class ApiEndpoint(object):
         # Squash across filters
         for f in filters:
             for field in f['filter_fields']:
-                _filters['filter_fields'][field[0]] = field[1]
+                _filters['filter_fields'][field['name']] = field
 
             if f['search_param'] not in EMPTY_VALUES:
                 _filters['search_param'] = f['search_param']
