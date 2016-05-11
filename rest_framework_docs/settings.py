@@ -7,6 +7,7 @@ class DRFSettings(object):
             "HIDE_DOCS": self.get_setting("HIDE_DOCS") or False,
             "HIDE_LIVE_ENDPOINTS": self.get_setting("HIDE_LIVE_ENDPOINTS") or False,
             "HIDE_HIDDEN_FIELDS": self.get_setting("HIDE_HIDDEN_FIELDS") or False,
+            "HIDE_APIROOT": self.get_setting("HIDE_APIROOT") or False,
             "DEFAULT_URLCONF": settings.ROOT_URLCONF,
             "CACHE_PREFIX": "DRFDOCS",
             "CACHE_TIMEOUT": self.get_setting("CACHE_TIMEOUT") or 0,
