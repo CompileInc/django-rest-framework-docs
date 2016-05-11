@@ -78,11 +78,11 @@ class ApiEndpoint(object):
             try:
                 try:
                     qs = self.callback.cls().get_queryset()
-                except:
+                except Exception:
                     qs = self.callback.cls().model.objects.all()
                 filter_class = filter_backend().get_filter_class(view=self.callback.cls,
                                                                  queryset=qs)
-            except:
+            except Exception:
                 pass
 
             # FIXME:
