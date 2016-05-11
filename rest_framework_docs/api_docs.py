@@ -8,7 +8,7 @@ from rest_framework_docs.api_endpoint import ApiEndpoint
 
 class ApiDocumentation(object):
 
-    def __init__(self, urlconf=settings.ROOT_URLCONF):
+    def __init__(self, urlconf):
         self.endpoints = []
         try:
             root_urlconf = import_string(urlconf)
