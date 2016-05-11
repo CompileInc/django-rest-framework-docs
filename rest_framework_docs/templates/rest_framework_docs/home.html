@@ -41,6 +41,7 @@
                 {% for method in endpoint.allowed_methods %}
                   <li class="method {{ method|lower }}">{{ method }}</li>
                 {% endfor %}
+                {% if not drfdocs_settings.HIDE_LIVE_ENDPOINTS %}
                   <li class="method plug"
                     data-toggle="modal"
                     data-path="{{ endpoint.path }}"
@@ -48,6 +49,7 @@
                     data-permissions="{{ endpoint.permissions }}"
                     data-fields="{{ endpoint.fields_json }}">
                     <i class="fa fa-plug"></i></li>
+                {% endif %}
               </ul>
             </div>
           </div>
@@ -63,13 +65,40 @@
             <div class="alert alert-danger" role="alert">Oops! There was something wrong with {{ endpoint.errors }}. Please check your code.</div>
             {% endif %}
 
-            {% if endpoint.fields %}
-            <p class="fields-desc">Fields:</p>
-              <ul class="list fields">
-              {% for field in endpoint.fields %}
-                <li class="field">{{ field.name }}: {{ field.type }} {% if field.required %}<span class="label label-primary label-required" title="Required">R</span>{% endif %}</li>
+            {% if endpoint.filters.ordering.items|length > 0 or endpoint.filters.search_param or endpoint.filters.filter_fields.items|length > 0 %}
+            <p class="fields-desc">Request Fields:</p>
+            <ul class="list fields">
+
+            {% if endpoint.filters.ordering %}
+              <li class="list-unstyled"><h5>Ordering:</h5></li>
+              <li>Query Parameter : {{ endpoint.filters.ordering.ordering_param }}</li>
+              <li>Ordering Choices : {% for field in endpoint.filters.ordering.ordering_fields %}{{ field }}{% if not forloop.last %}, {% endif %}{% endfor %}</li>
+            {% endif %}
+
+            {% if endpoint.filters.search_param %}
+              <li class="list-unstyled"><h5>Search:</h5></li>
+              <li>Search Parameter : {{ endpoint.filters.search_param }}</li>
+            {% endif %}
+
+            {% if endpoint.filters.filter_fields.items|length > 0 %}
+              <li class="list-unstyled"><h5>Filters:</h5></li>
+              {% for name, field in endpoint.filters.filter_fields.items %}
+              <li class="field">{{ field.name }}: {{ field.type }} {% if field.required %}<span class="label label-primary label-required" title="Required">R</span>{% endif %}
+              {% include "rest_framework_docs/field_choices.html" %}
+              </li>
               {% endfor %}
-              </ul>
+            {% endif %}
+
+            </ul>
+            {% endif %}
+
+            <p class="fields-desc">Response Fields:</p>
+            {% if endpoint.fields %}
+            <ul class="list fields">
+            {% for field in endpoint.fields %}
+              <li class="field">{{ field.name }}: {{ field.type }} {% if field.required %}<span class="label label-primary label-required" title="Required">R</span>{% endif %}</li>
+            {% endfor %}
+            </ul>
             {% elif not endpoint.errors %}
             <p>No fields.</p>
             {% endif %}
@@ -87,6 +116,7 @@
     <h2 class="text-center">No endpoints found for {{ query }}.</h2>
   {% endif %}
 
+  {% if not drfdocs_settings.HIDE_LIVE_ENDPOINTS %}
   <!-- Modal -->
   <div class="modal fade api-modal" id="liveAPIModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg" role="document">
@@ -100,5 +130,6 @@
       </div>
     </div>
   </div>
+  {% endif %}
 
 {% endblock %}

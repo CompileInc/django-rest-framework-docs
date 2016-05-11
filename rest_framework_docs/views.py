@@ -1,12 +1,30 @@
+from django.conf import settings as django_settings
 from django.http import Http404
 from django.views.generic.base import TemplateView
 from rest_framework_docs.api_docs import ApiDocumentation
+from rest_framework_docs.cache import CacheMixin
 from rest_framework_docs.settings import DRFSettings
 
 
-class DRFDocsView(TemplateView):
+class DRFDocsView(CacheMixin, TemplateView):
 
     template_name = "rest_framework_docs/home.html"
+
+    def _get_url_conf(self):
+        """
+        Decision for which urlconf to pick is taken here.
+        """
+        settings = DRFSettings().settings
+
+        urlconf = settings['URLCONF']
+
+        if urlconf == 'request.urlconf':
+            if  hasattr(self.request, 'urlconf'):
+                urlconf = self.request.urlconf
+            else:
+                urlconf = settings['DEFAULT_URLCONF']
+
+        return urlconf
 
     def get_context_data(self, **kwargs):
         settings = DRFSettings().settings
@@ -14,10 +32,10 @@ class DRFDocsView(TemplateView):
             raise Http404("Django Rest Framework Docs are hidden. Check your settings.")
 
         context = super(DRFDocsView, self).get_context_data(**kwargs)
-        if hasattr(self.request, 'urlconf'):
-            docs = ApiDocumentation(self.request.urlconf)
-        else:
-            docs = ApiDocumentation()
+
+        urlconf = self._get_url_conf()
+        docs = ApiDocumentation(urlconf)
+
         endpoints = docs.get_endpoints()
 
         query = self.request.GET.get("search", "")
@@ -26,4 +44,5 @@ class DRFDocsView(TemplateView):
 
         context['query'] = query
         context['endpoints'] = endpoints
+        context['drfdocs_settings'] = settings
         return context

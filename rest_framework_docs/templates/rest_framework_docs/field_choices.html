@@ -1,0 +1,17 @@
+{% if field.choices and field.choices|length > 0 %}
+<a class="label label-info" title="Choices" role="button" data-toggle="collapse" href="#{{ endpoint.path|slugify }}{{ field.name|slugify}}" aria-expanded="false" aria-controls="{{ endpoint.path|slugify }}{{ field.name|slugify}}">C</a>
+<div class="row">
+  <div class="col-md-4 col-sm-12">
+    <div class="collapse" id="{{ endpoint.path|slugify }}{{ field.name|slugify}}">
+      <div class="panel table-responsive">
+        <table class="table table-condensed">
+          <tr><th>Verbose</th><th>Value</th></tr>
+        {% for value, verbose in field.choices %}
+          <tr><td>{{ verbose }}</td><td>{{ value }}</td></tr>
+        {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
