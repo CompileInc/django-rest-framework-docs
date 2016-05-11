@@ -2,10 +2,11 @@ from django.conf import settings as django_settings
 from django.http import Http404
 from django.views.generic.base import TemplateView
 from rest_framework_docs.api_docs import ApiDocumentation
+from rest_framework_docs.cache import CacheMixin
 from rest_framework_docs.settings import DRFSettings
 
 
-class DRFDocsView(TemplateView):
+class DRFDocsView(CacheMixin, TemplateView):
 
     template_name = "rest_framework_docs/home.html"
 
