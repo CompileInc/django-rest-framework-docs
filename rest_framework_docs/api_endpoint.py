@@ -44,24 +44,29 @@ class ApiEndpoint(object):
     def __get_serializer_fields__(self):
         fields = []
         settings = DRFSettings().settings
+        serializer = None
 
-        if hasattr(self.callback.cls, 'serializer_class') and hasattr(self.callback.cls.serializer_class, 'get_fields'):
+        if hasattr(self.callback.cls, 'serializer_class'):
             serializer = self.callback.cls.serializer_class
-            if hasattr(serializer, 'get_fields'):
-                try:
-                    fields = [{
-                        "name": key,
-                        "type": str(field.__class__.__name__),
-                        "required": field.required
-                    } for key, field in serializer().get_fields().items() \
-                              if (settings['HIDE_HIDDEN_FIELDS'] and not self._is_hidden_field(field)) or\
-                                 (not settings['HIDE_HIDDEN_FIELDS'])]
-                except KeyError as e:
-                    self.errors = e
-                    fields = []
 
-                # FIXME:
-                # Show more attibutes of `field`?
+        elif hasattr(self.callback.cls, 'get_serializer_class'):
+            serializer = self.callback.cls.get_serializer_class(self.pattern.callback.cls())
+
+        if hasattr(serializer, 'get_fields'):
+            try:
+                fields = [{
+                    "name": key,
+                    "type": str(field.__class__.__name__),
+                    "required": field.required
+                } for key, field in serializer().get_fields().items()
+                          if (settings['HIDE_HIDDEN_FIELDS'] and not self._is_hidden_field(field)) or\
+                             (not settings['HIDE_HIDDEN_FIELDS'])]
+            except KeyError as e:
+                self.errors = e
+                fields = []
+
+            # FIXME:
+            # Show more attibutes of `field`?
 
         return fields
 
