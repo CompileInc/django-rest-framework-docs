@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import json
 import inspect
 from django.contrib.admindocs.views import simplify_regex
@@ -117,9 +118,9 @@ class ApiEndpoint(object):
 
     def __get_filter_fields__(self):
         _filters = {
-                    'filter_fields':{},
+                    'filter_fields': OrderedDict(),
                     'search_param': None,
-                    'ordering': {},
+                    'ordering': OrderedDict(),
                     }
 
         filters = []
