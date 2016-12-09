@@ -9,8 +9,6 @@ class DRFSettings(object):
             "HIDE_HIDDEN_FIELDS": self.get_setting("HIDE_HIDDEN_FIELDS") or False,
             "HIDE_APIROOT": self.get_setting("HIDE_APIROOT") or False,
             "DEFAULT_URLCONF": settings.ROOT_URLCONF,
-            "CACHE_PREFIX": self.get_setting("CACHE_PREFIX") or "DRFDOCS",
-            "CACHE_TIMEOUT": self.get_setting("CACHE_TIMEOUT") or 0
         }
         self.drf_settings["URLCONF"] = self.get_setting("URLCONF") or self.drf_settings["DEFAULT_URLCONF"]
 
